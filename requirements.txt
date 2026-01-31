@@ -1,2 +1,7 @@
 jinja2
 regex
+rocksdict
+#h5py
+#tables
+#pandas
+

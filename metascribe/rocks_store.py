@@ -4,6 +4,8 @@ import json
 import io
 import pandas as pd
 from rocksdict import Rdict, Options, AccessType
+import logging
+logger = logging.getLogger(__name__)
 
 class RocksStore:
     def __init__(self, db_path, lock=False, lock_timeout=300, force_open=False):
@@ -11,6 +13,14 @@ class RocksStore:
         self.lock_path = f"{db_path}.lock"
         self._store = None
         self.lock = lock
+        
+        parent_dir = os.path.dirname(os.path.abspath(db_path))
+        if parent_dir and not os.path.exists(parent_dir):
+            try:
+                os.makedirs(parent_dir, exist_ok=True)
+                logger.info(f"Created parent directory for RocksDB at {parent_dir}")
+            except Exception as e:
+                raise IOError(f"Could not create parent directory {parent_dir}: {e}")
         
         # 1. Force open logic
         if force_open and os.path.exists(self.lock_path):
@@ -66,6 +76,9 @@ class RocksStore:
             raise KeyError(f"Key {key} not found")
             
         return str(self._store[key])
+    
+    # def keys_with_prefix(self, prefix: str):
+        
     
     def close(self):
         if self._store is not None:
