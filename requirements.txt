@@ -1,6 +1,7 @@
 jinja2
 regex
 rocksdict
+pyarrow # needed to store parquet in rocksdb
 #h5py
 #tables
 #pandas
